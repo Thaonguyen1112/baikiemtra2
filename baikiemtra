@@ -1,0 +1,71 @@
+
+
+<?php
+//TRẮC NGHIỆM
+echo "<h2>PHẦN TRẮC NGHIỆM</h2>";
+echo "Câu 1: Kết quả in ra màn hình là: 5<br>";
+echo "Câu 2: Đáp án d <br>";
+echo "Câu 3: Đáp án d <br>";
+echo "Câu 4: Đáp án a <br>";
+echo "Câu 5: Đáp án a <br>";
+echo "<br><br>"; 
+
+//  BÀI 1 
+echo "<h2>BÀI 1: SỐ NGUYÊN TỐ</h2>";
+
+function isPrime($n) {
+    if ($n < 2) return false;
+    for ($i = 2; $i <= sqrt($n); $i++) {
+        if ($n % $i == 0) return false;
+    }
+    return true;
+}
+
+
+echo "<strong>Danh sách các số nguyên tố từ 1 đến 100:</strong><br>";
+for ($i = 1; $i <= 100; $i++) {
+    if (isPrime($i)) {
+        echo $i . " ";
+    }
+}
+echo "<br><br>"; 
+
+// BÀI 2
+echo "<h2>BÀI 2: QUẢN LÝ SẢN PHẨM</h2>";
+
+$host = 'localhost';
+$dbname = 'kiemtra';
+$username = 'root'; 
+$password = '';    
+
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Kết nối thất bại: " . $e->getMessage());
+}
+
+$stmt = $pdo->prepare("SELECT name, price, quantity FROM danhsachsanpham");
+$stmt->execute();
+$products = $stmt->fetchAll(); 
+
+echo "<h3>Danh sách thông tin sản phẩm:</h3>";
+foreach ($products as $index => $product) {
+    echo "<strong>Sản phẩm " . ($index + 1) . ":</strong><br>";
+    echo "- Tên: " . htmlspecialchars($product['name']) . "<br>";
+    echo "- Giá: " . number_format($product['price']) . " VNĐ<br>";
+    echo "- Số lượng: " . $product['quantity'] . "<br><br>";
+}
+
+function calculateTotalValue($productList) {
+    $total = 0;
+    foreach ($productList as $product) {
+        $total += $product['price'] * $product['quantity'];
+    }
+    return $total;
+}
+
+$totalValue = calculateTotalValue($products);
+echo "<strong>Tổng giá trị của tất cả sản phẩm: " . number_format($totalValue) . " VNĐ</strong>";
+?>
